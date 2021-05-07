@@ -1,35 +1,34 @@
 package cgm.com.salestaxes.services
 
 import cgm.com.salestaxes.entities.*
-import cgm.com.salestaxes.helpers.round
-import cgm.com.salestaxes.helpers.roundedDouble
-import cgm.com.salestaxes.helpers.roundedToNearest05
+import cgm.com.salestaxes.helpers.*
 import cgm.com.salestaxes.interfaces.TaxService
-import kotlin.math.roundToLong
 
 class ReceiptCalculator(private val taxService: TaxService) {
 
     fun receipt(sale: Sale): Receipt {
         var totalPrice: Double = 0.0
         var totalTax: Double = 0.0
-        var tax : Double = 0.0
+        var priceTax = 0.0
+
         sale.salesList.forEach {
 
-            tax = (taxService.applyTax(it.article, sale.country))
-            it.taxedPrice = getTaxedPriceOfArticle(it.article, it.quantity, tax)
-            totalTax += (getTaxedPrice(it.article, it.quantity, tax))
+            priceTax = getTaxedPrice(it, sale.country).roundedToNearest05
+            it.taxedPrice = getTaxedPriceOfArticle(it, priceTax)
 
+            totalTax += priceTax
             totalPrice += it.taxedPrice
 
         }
         return Receipt(totalPrice.roundedDouble, totalTax.roundedToNearest05, sale.salesList)
     }
 
-    private fun getTaxedPriceOfArticle(article: Article, quantity: Int, tax: Double): Double {
-        return ((article.price * quantity) + (((article.price * quantity) * tax).roundedToNearest05)).roundedDouble
+    private fun getTaxedPriceOfArticle(saleArticle: SaleArticle, priceTax: Double): Double {
+        return ((saleArticle.article.price * saleArticle.quantity) + priceTax).roundedDouble
     }
 
-    private fun getTaxedPrice(article: Article, quantity: Int, tax: Double): Double {
-        return ((article.price * quantity) * tax)
+    private fun getTaxedPrice(saleArticle: SaleArticle, country: Country): Double {
+        val tax = taxService.applyTax(saleArticle.article, country)
+        return ((saleArticle.article.price * saleArticle.quantity) * tax)
     }
 }

@@ -8,18 +8,16 @@ import cgm.com.salestaxes.services.ReceiptCalculator
 import cgm.com.salestaxes.services.TaxCalculator
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 
 class MainTests {
     private val taxCalculator = ReceiptCalculator(TaxCalculator())
+
     @Test
     fun `Sale price for article with exemption not imported no tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 12.49, Category.Book, Country("ITA")), 1,false)
-        sale.addSales(Article("Art2", 1.0, Category.Book, Country("ITA")), 1,false)
+        sale.addSales(Article("Art1", 12.49, Category.Book, Country("ITA")), 1)
+        sale.addSales(Article("Art2", 1.0, Category.Book, Country("ITA")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 13.49
@@ -33,7 +31,7 @@ class MainTests {
     fun `Sale price for article with exemption imported no tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 14.99, Category.Book, Country("SPA")), 1, false)
+        sale.addSales(Article("Art1", 14.99, Category.Book, Country("SPA")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 15.74
@@ -46,7 +44,7 @@ class MainTests {
     fun `Sale price for article with no exemption not imported local tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 47.50, Category.Other, Country("SPA")), 1, true)
+        sale.addSales(Article("Art1", 47.50, Category.Other, Country("SPA")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 54.65
@@ -59,7 +57,7 @@ class MainTests {
     fun `Sale price for article with no exemption imported  sum of tax imported and local expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 47.50, Category.Other, Country("SPA")), 1, false)
+        sale.addSales(Article("Art1", 47.50, Category.Other, Country("SPA")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 54.65
@@ -72,9 +70,9 @@ class MainTests {
     fun `Purchase 1 Happy Path`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("book", 12.49, Category.Book, Country("ITA")), 1, true)
-        sale.addSales(Article("music cd", 14.99, Category.Other, Country("ITA")), 1, true)
-        sale.addSales(Article("chocolate bar", 0.85, Category.Food, Country("ITA")), 1, true)
+        sale.addSales(Article("book", 12.49, Category.Book, Country("ITA")), 1)
+        sale.addSales(Article("music cd", 14.99, Category.Other, Country("ITA")), 1)
+        sale.addSales(Article("chocolate bar", 0.85, Category.Food, Country("ITA")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 29.83
@@ -89,8 +87,8 @@ class MainTests {
     fun `Purchase 2 Happy Path`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("imported box of chocolates", 10.00, Category.Food, Country("SPA")), 1, true)
-        sale.addSales(Article("imported bottle of perfume", 47.50, Category.Other, Country("DEU")), 1, true)
+        sale.addSales(Article("imported box of chocolates", 10.00, Category.Food, Country("SPA")), 1)
+        sale.addSales(Article("imported bottle of perfume", 47.50, Category.Other, Country("DEU")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 65.15
@@ -104,10 +102,10 @@ class MainTests {
     fun `Purchase 3 Happy Path`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("imported bottle of perfume", 27.99, Category.Other, Country("SPA")), 1, true)
-        sale.addSales(Article("bottle of perfume", 18.99, Category.Other, Country("ITA")), 1, true)
-        sale.addSales(Article("packet of headache pills", 9.75, Category.Medical, Country("ITA")), 1, true)
-        sale.addSales(Article(" box of imported chocolates", 11.25, Category.Food, Country("DEU")), 1, true)
+        sale.addSales(Article("imported bottle of perfume", 27.99, Category.Other, Country("SPA")), 1)
+        sale.addSales(Article("bottle of perfume", 18.99, Category.Other, Country("ITA")), 1)
+        sale.addSales(Article("packet of headache pills", 9.75, Category.Medical, Country("ITA")), 1)
+        sale.addSales(Article(" box of imported chocolates", 11.25, Category.Food, Country("DEU")), 1)
 
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 74.68
@@ -115,7 +113,7 @@ class MainTests {
         receipt.listArticle.size shouldBe 4
         receipt.listArticle[0].taxedPrice shouldBe 32.19
         receipt.listArticle[1].taxedPrice shouldBe 20.89
-        receipt.listArticle[2].taxedPrice shouldBe  9.75
+        receipt.listArticle[2].taxedPrice shouldBe 9.75
         receipt.listArticle[3].taxedPrice shouldBe 11.85
     }
 }
