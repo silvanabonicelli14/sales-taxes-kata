@@ -11,28 +11,41 @@ import org.junit.jupiter.api.Test
 
 class MainTests {
     @Test
-    internal fun `Sale price for article`() {
+    fun `Sale price for article with exemption`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article.ArticleByPiece("Art1", 1.0, Category.Book, Country("ITA")), 2)
-        sale.addSales(Article.ArticleByShelf("Art2", 2.0, Category.Other, Country("ITA")), 1)
+        sale.addSales(Article("Art1", 12.49, Category.Book, Country("ITA")), 1,false)
+//        sale.addSales(Article("Art2", 2.0, Category.Other, Country("ITA")), 1,false)
 
         val taxCalculator = ReceiptCalculator(TaxCalculator())
         val receipt = taxCalculator.receipt(sale)
-        receipt.totalPrice shouldBe 4.0
+        receipt.totalPrice shouldBe 12.49
         receipt.totalTax shouldBe 0.0
         receipt.listArticle.size shouldBe 0
     }
 
     @Test
-    internal fun `Sale price for article free of taxed but imported`() {
+    fun `Sale price for article with exemption but imported no tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article.ArticleByPiece("Art1", 1.0, Category.Book, Country("SPA")), 2)
+        sale.addSales(Article("Art1", 14.99, Category.Book, Country("SPA")), 1, true)
 
         val taxCalculator = ReceiptCalculator(TaxCalculator())
         val receipt = taxCalculator.receipt(sale)
-        receipt.totalPrice shouldBe 3
+        receipt.totalPrice shouldBe 14.99
+        receipt.totalTax shouldBe 0.0
+        receipt.listArticle.size shouldBe 0
+    }
+
+    @Test
+    fun `Sale price for article with no exemption NOT imported no tax expected`() {
+
+        val sale = Sale(Country("ITA"))
+        sale.addSales(Article("Art1", 14.99, Category.Other, Country("ITA")), 1, true)
+
+        val taxCalculator = ReceiptCalculator(TaxCalculator())
+        val receipt = taxCalculator.receipt(sale)
+        receipt.totalPrice shouldBe 16.49
         receipt.totalTax shouldBe 0.0
         receipt.listArticle.size shouldBe 0
     }
