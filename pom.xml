@@ -70,7 +70,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.cgm.salestaxes.MainKt
+                                        cgm.com.salestaxes.MainKt
                                     </mainClass>
                                 </manifest>
                             </archive>

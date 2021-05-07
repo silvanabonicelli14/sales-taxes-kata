@@ -9,7 +9,7 @@ import cgm.com.salestaxes.services.TaxCalculator
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class MainTests {
+class ReceiptCalculatorTests {
     private val taxCalculator = ReceiptCalculator(TaxCalculator())
 
     @Test
