@@ -15,39 +15,39 @@ class MainTests {
 
         val sale = Sale(Country("ITA"))
         sale.addSales(Article("Art1", 12.49, Category.Book, Country("ITA")), 1,false)
-//        sale.addSales(Article("Art2", 2.0, Category.Other, Country("ITA")), 1,false)
+        sale.addSales(Article("Art2", 1.0, Category.Book, Country("ITA")), 1,false)
 
         val taxCalculator = ReceiptCalculator(TaxCalculator())
         val receipt = taxCalculator.receipt(sale)
-        receipt.totalPrice shouldBe 12.49
+        receipt.totalPrice shouldBe 13.49
         receipt.totalTax shouldBe 0.0
-        receipt.listArticle.size shouldBe 0
+        receipt.listArticle.size shouldBe 2
     }
 
     @Test
     fun `Sale price for article with exemption but imported no tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 14.99, Category.Book, Country("SPA")), 1, true)
+        sale.addSales(Article("Art1", 14.99, Category.Book, Country("SPA")), 1, false)
 
         val taxCalculator = ReceiptCalculator(TaxCalculator())
         val receipt = taxCalculator.receipt(sale)
         receipt.totalPrice shouldBe 14.99
         receipt.totalTax shouldBe 0.0
-        receipt.listArticle.size shouldBe 0
+        receipt.listArticle.size shouldBe 1
     }
 
     @Test
-    fun `Sale price for article with no exemption NOT imported no tax expected`() {
+    fun `Sale price for article with no exemption  imported tax expected`() {
 
         val sale = Sale(Country("ITA"))
-        sale.addSales(Article("Art1", 14.99, Category.Other, Country("ITA")), 1, true)
+        sale.addSales(Article("Art1", 47.50, Category.Other, Country("SPA")), 1, true)
 
         val taxCalculator = ReceiptCalculator(TaxCalculator())
         val receipt = taxCalculator.receipt(sale)
-        receipt.totalPrice shouldBe 16.49
-        receipt.totalTax shouldBe 0.0
-        receipt.listArticle.size shouldBe 0
+        receipt.totalPrice shouldBe 54.65
+        receipt.totalTax shouldBe 7.13
+        receipt.listArticle.size shouldBe 1
     }
 }
 
