@@ -11,15 +11,13 @@ const val importationTax = 0.05
 
 class TaxCalculator: TaxService {
     override fun applyTax(article: Article, countryOfSale: Country): Double {
-        var tax: Double  = localTax
+        var tax: Double  = 0.0
 
-        when {
-            listOfExemptions.contains(article.category) -> {
-                return 0.0
-            }
-            article.country.name != countryOfSale.name -> {
-                tax += importationTax
-            }
+        if (!listOfExemptions.contains(article.category)) {
+            tax += localTax
+        }
+        if (article.country.name != countryOfSale.name) {
+            tax += importationTax
         }
         return tax
     }

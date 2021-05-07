@@ -11,7 +11,6 @@ fun Double.round(soldByShelf: Boolean): Double {
     }
 }
 
-
 val Double.roundedDouble: Double
     get() {
         return (this * 100).roundToLong() / 100.0
