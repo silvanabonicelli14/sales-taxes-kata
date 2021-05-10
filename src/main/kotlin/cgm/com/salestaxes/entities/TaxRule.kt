@@ -9,20 +9,20 @@ interface  Tax{
 }
 
 interface TaxRule{
-    fun taxForImported(tax : TaxImported)
-    fun taxForCategory(tax: TaxCategory)
+    fun tax(tax : TaxImported)
+    fun tax(tax: TaxCategory)
 }
 
 
 data class TaxImported(val article: Article, val countryForTax: Country) : Tax {
     override fun applyTaxFor(taxRule: TaxRule)  {
-        taxRule.taxForImported(this)
+        taxRule.tax(this)
     }
 }
 
 data class TaxCategory(val article: Article, val countryForTax: Country) :Tax {
     override fun applyTaxFor(taxRule: TaxRule) {
-        taxRule.taxForCategory(this)
+        taxRule.tax(this)
     }
  }
 
@@ -31,10 +31,10 @@ class UseTax {
         var taxVal = 0.0
 
         tax.applyTaxFor( object: TaxRule{
-            override fun taxForImported(tax: TaxImported) {
+            override fun tax(tax: TaxImported) {
                 taxVal += if (tax.article.country.name != tax.countryForTax.name) { importationTax} else 0.0
             }
-            override fun taxForCategory(tax: TaxCategory) {
+            override fun tax(tax: TaxCategory) {
                 taxVal += if (listOfExemptions.contains(tax.article.category)) { 0.0} else localTax
             }
         })
